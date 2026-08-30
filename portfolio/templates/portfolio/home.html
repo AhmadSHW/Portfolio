@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- ============ HERO ============ -->
+<section id="home" class="hero-section d-flex align-items-center">
+    <div class="container">
+        <div class="row align-items-center gy-5">
+            <div class="col-lg-7 fade-in-up">
+                <p class="hero-greeting">Hi, I'm 👋</p>
+                <h1 class="hero-name">{{ profile.full_name|default:"Your Name" }}</h1>
+                <h2 class="hero-typing">
+                    <span id="typingText"></span><span class="typing-cursor">|</span>
+                </h2>
+                <p class="hero-tagline">{{ profile.tagline }}</p>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    {% if profile.cv_file %}
+                        <a href="{{ profile.cv_file.url }}" class="btn btn-primary-glow" download>
+                            <i class="bi bi-download me-2"></i>Download CV
+                        </a>
+                    {% endif %}
+                    <a href="#contact" class="btn btn-outline-glow">
+                        <i class="bi bi-chat-dots me-2"></i>Contact Me
+                    </a>
+                </div>
+                <div class="hero-socials mt-4">
+                    {% if profile.github_url %}<a href="{{ profile.github_url }}" target="_blank" rel="noopener"><i class="bi bi-github"></i></a>{% endif %}
+                    {% if profile.linkedin_url %}<a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener"><i class="bi bi-linkedin"></i></a>{% endif %}
+                    {% if profile.email %}<a href="mailto:{{ profile.email }}"><i class="bi bi-envelope-fill"></i></a>{% endif %}
+                </div>
+            </div>
+            <div class="col-lg-5 text-center fade-in-up" data-delay="150">
+                <div class="hero-image-wrapper mx-auto">
+                    {% if profile.profile_image %}
+                        <img src="{{ profile.profile_image.url }}" alt="{{ profile.full_name }}" class="hero-image">
+                    {% else %}
+                        <div class="hero-image hero-image-placeholder d-flex align-items-center justify-content-center">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="#about" class="scroll-down-indicator"><i class="bi bi-chevron-double-down"></i></a>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="section-padding about-section">
+    <div class="container">
+        <div class="section-heading fade-in-up">
+            <span class="section-tag">About Me</span>
+            <h2>Who I Am</h2>
+        </div>
+        <div class="row align-items-center gy-5 mt-3">
+            <div class="col-lg-6 fade-in-up">
+                <p class="about-text">{{ profile.about_text }}</p>
+                <div class="row g-3 mt-3">
+                    <div class="col-6 col-md-4">
+                        <div class="stat-card">
+                            <h3>{{ projects.count }}+</h3>
+                            <p>Projects</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="stat-card">
+                            <h3>{{ profile.years_experience|default:1 }}+</h3>
+                            <p>Years Learning</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="stat-card">
+                            <h3>100%</h3>
+                            <p>Dedication</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 fade-in-up" data-delay="150">
+                <div class="about-info-card">
+                    <div class="info-row">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <div><span>Location</span><p>{{ profile.location|default:"—" }}</p></div>
+                    </div>
+                    <div class="info-row">
+                        <i class="bi bi-envelope-fill"></i>
+                        <div><span>Email</span><p>{{ profile.email }}</p></div>
+                    </div>
+                    <div class="info-row">
+                        <i class="bi bi-telephone-fill"></i>
+                        <div><span>Phone</span><p>{{ profile.phone|default:"—" }}</p></div>
+                    </div>
+                    <div class="info-row">
+                        <i class="bi bi-mortarboard-fill"></i>
+                        <div><span>Education</span><p>Full Stack Web Development, AXSOS Academy</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ SKILLS ============ -->
+<section id="skills" class="section-padding skills-section">
+    <div class="container">
+        <div class="section-heading fade-in-up">
+            <span class="section-tag">Skills</span>
+            <h2>Tools I Work With</h2>
+        </div>
+        <div class="row gy-4 mt-3">
+            {% for category, skills in skills_by_category.items %}
+            <div class="col-md-6 fade-in-up">
+                <h5 class="skill-category-title">{{ category }}</h5>
+                {% for skill in skills %}
+                <div class="skill-item">
+                    <div class="d-flex justify-content-between">
+                        <span>{% if skill.icon_class %}<i class="bi {{ skill.icon_class }} me-1"></i>{% endif %}{{ skill.name }}</span>
+                        <span>{{ skill.proficiency }}%</span>
+                    </div>
+                    <div class="progress skill-progress">
+                        <div class="progress-bar" role="progressbar" data-width="{{ skill.proficiency }}" style="width:0%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">No skills added yet. Add them from /admin</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section id="projects" class="section-padding projects-section">
+    <div class="container">
+        <div class="section-heading fade-in-up">
+            <span class="section-tag">Portfolio</span>
+            <h2>My Projects</h2>
+        </div>
+        <div class="row g-4 mt-3">
+            {% for project in projects %}
+            <div class="col-md-6 col-lg-4 fade-in-up" data-delay="{{ forloop.counter0|add:'50' }}">
+                <div class="project-card h-100">
+                    {% if project.featured %}<span class="featured-badge">Featured</span>{% endif %}
+                    <div class="project-image">
+                        {% if project.image %}
+                            <img src="{{ project.image.url }}" alt="{{ project.title }}">
+                        {% else %}
+                            <div class="project-image-placeholder d-flex align-items-center justify-content-center">
+                                <i class="bi bi-code-slash"></i>
+                            </div>
+                        {% endif %}
+                        <div class="project-overlay">
+                            {% if project.github_url %}<a href="{{ project.github_url }}" target="_blank" rel="noopener"><i class="bi bi-github"></i></a>{% endif %}
+                            {% if project.live_url %}<a href="{{ project.live_url }}" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i></a>{% endif %}
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <h4>{{ project.title }}</h4>
+                        <p>{{ project.description }}</p>
+                        <div class="tech-badges">
+                            {% for tech in project.tech_list %}
+                                <span class="tech-badge">{{ tech }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">No projects added yet. Add them from /admin</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact" class="section-padding contact-section">
+    <div class="container">
+        <div class="section-heading fade-in-up">
+            <span class="section-tag">Get In Touch</span>
+            <h2>Contact Me</h2>
+        </div>
+        <div class="row g-5 mt-3">
+            <div class="col-lg-5 fade-in-up">
+                <p class="contact-lead">Have a project idea or a job opportunity? Let me know and I'll get back to you as soon as possible.</p>
+                <div class="contact-info-item">
+                    <i class="bi bi-envelope-fill"></i>
+                    <div><span>Email</span><p>{{ profile.email }}</p></div>
+                </div>
+                <div class="contact-info-item">
+                    <i class="bi bi-telephone-fill"></i>
+                    <div><span>Phone</span><p>{{ profile.phone|default:"—" }}</p></div>
+                </div>
+                <div class="contact-info-item">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <div><span>Location</span><p>{{ profile.location|default:"—" }}</p></div>
+                </div>
+                <div class="hero-socials mt-4">
+                    {% if profile.github_url %}<a href="{{ profile.github_url }}" target="_blank" rel="noopener"><i class="bi bi-github"></i></a>{% endif %}
+                    {% if profile.linkedin_url %}<a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener"><i class="bi bi-linkedin"></i></a>{% endif %}
+                </div>
+            </div>
+            <div class="col-lg-7 fade-in-up" data-delay="150">
+                <form method="post" class="contact-form">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">{{ form.name }}</div>
+                        <div class="col-md-6">{{ form.email }}</div>
+                        <div class="col-12">{{ form.subject }}</div>
+                        <div class="col-12">{{ form.message }}</div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary-glow w-100 w-md-auto">
+                                <i class="bi bi-send-fill me-2"></i>Send Message
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Roles for the Hero typing effect — comes from Profile.typing_roles
+    const typingRoles = [
+        {% for role in profile.roles_list %}"{{ role|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}
+    ];
+</script>
+{% endblock %}
