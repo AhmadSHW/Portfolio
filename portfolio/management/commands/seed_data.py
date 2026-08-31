@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from portfolio.models import Profile, Skill, Project
-
+from django.contrib.auth.models import User
 
 class Command(BaseCommand):
     help = "Seeds the database with initial Profile, Skills, and Projects data"
@@ -122,3 +122,16 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS(f"Added {len(projects_data)} projects ✅"))
         self.stdout.write(self.style.SUCCESS("Done! Open /admin later to fine-tune anything (real GitHub links, project images)."))
+
+        #================================================================================
+        #4) Superuser (admin account) - only created if it doesn't exist yet
+        #==================================================================
+        if not User.objects.filter(username='AboShwiki').exists():
+            User.objects.create_superuser(
+                username='AboShwiki',
+                email='ahmadshwiki780@gmail.com',
+                password='Aboshwiki20!'
+            )
+            self.stdout.write(self.style.SUCCESS("Superuser 'AboShwiki' created"))
+        else:
+            self.stdout.write(self.style.SUCCESS("Superuser already exists"))
